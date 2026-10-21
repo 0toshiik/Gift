@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GiftGuarant</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#EEF5FF;--card:#fff;--ink:#0E2247;--mute:#5F7699;--line:#D7E6FA;--blue:#1F7BF2;--sky:#5CB7FF;--navy:#0B2B66;--ok:#18A86B;color-scheme:light dark}
+@media (prefers-color-scheme:dark){:root{--bg:#07142E;--card:#0F2350;--ink:#EAF2FF;--mute:#8FA8D4;--line:#1E3B73}}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:Manrope,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45;padding:env(safe-area-inset-top,0) 0 0}
+main{max-width:560px;margin:0 auto;padding:14px 16px calc(92px + env(safe-area-inset-bottom,0px))}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.brand{font-weight:800;font-size:17px;display:flex;gap:8px;align-items:center}
+.logo{width:28px;height:28px;border-radius:9px;background:linear-gradient(145deg,var(--sky),var(--blue));display:grid;place-items:center}
+.lang{display:flex;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px}
+.lang button{border:0;background:none;color:var(--mute);font:700 13px Manrope,sans-serif;padding:5px 11px;border-radius:999px}
+.lang button.on{background:var(--blue);color:#fff}
+.hero{background:linear-gradient(160deg,#4DB0FF 0%,#1F7BF2 55%,#0B2B66 130%);color:#fff;border-radius:26px;padding:22px 20px 20px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-50px;top:-50px;width:190px;height:190px;border-radius:50%;background:rgba(255,255,255,.12)}
+.hero h1{font-size:26px;line-height:1.15;font-weight:800;max-width:15ch;position:relative}
+.hero p{opacity:.88;margin:6px 0 16px;max-width:30ch;position:relative}
+.track{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;position:relative}
+.step{text-align:center;font-size:11.5px;font-weight:700;opacity:.62;position:relative;padding-top:20px}
+.step:before{content:"";position:absolute;top:5px;left:0;right:0;height:3px;background:rgba(255,255,255,.35);border-radius:3px}
+.step:after{content:"";position:absolute;top:0;left:50%;margin-left:-6px;width:13px;height:13px;border-radius:50%;background:#7FC4FF;border:3px solid #1F7BF2;box-sizing:border-box}
+.step.done,.step.now{opacity:1}
+.step.done:before,.step.now:before{background:#fff}
+.step.done:after{background:#fff}
+.step.now:after{background:#fff;box-shadow:0 0 0 5px rgba(255,255,255,.35)}
+.tag{font-size:12px;opacity:.85;margin-bottom:10px;position:relative}
+h2{font-size:18px;font-weight:800;margin:22px 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px 16px}
+.deal{display:flex;gap:12px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;margin-bottom:10px;cursor:pointer}
+.deal.sel{border-color:var(--blue);box-shadow:0 0 0 3px rgba(31,123,242,.18)}
+.deal b{display:block}.deal small{color:var(--mute)}
+.deal .sum{margin-left:auto;text-align:right;font-weight:800;white-space:nowrap}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;background:rgba(31,123,242,.12);color:var(--blue)}
+.chip.ok{background:rgba(24,168,107,.14);color:var(--ok)}
+label{display:block;font-weight:700;margin:14px 0 6px}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+textarea{resize:none;min-height:76px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:700 13px Manrope,sans-serif;padding:8px 14px;border-radius:999px}
+.seg button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.err{color:#E5484D;font-size:13px;margin-top:6px;min-height:18px}
+.btn{width:100%;border:0;border-radius:16px;padding:15px;font:800 16px Manrope,sans-serif;color:#fff;background:linear-gradient(135deg,var(--sky),var(--blue));margin-top:14px;box-shadow:0 8px 20px rgba(31,123,242,.35)}
+.btn:active{transform:scale(.985)}
+.btn.ghost{background:var(--card);color:var(--blue);border:1.5px solid var(--line);box-shadow:none}
+.linkbox{word-break:break-all;background:var(--bg);border:1.5px dashed var(--sky);border-radius:14px;padding:12px;font-weight:700;color:var(--blue)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.stats div{background:var(--bg);border-radius:14px;padding:12px}.stats b{font-size:22px;display:block}
+.stats small{color:var(--mute)}
+.empty{color:var(--mute);text-align:center;padding:18px}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px))}
+nav .in{display:flex;width:100%;max-width:560px}
+nav button{flex:1;border:0;background:none;color:var(--mute);font:700 11.5px Manrope,sans-serif;display:grid;justify-items:center;gap:3px;padding:6px 0;border-radius:14px}
+nav button.on{color:var(--blue)}
+nav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--navy);color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;max-width:90%}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.hide{display:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav><div class="in" id="tabs"></div></nav>
+<div class="toast" id="toast"></div>
+<script>
+// ====== НАСТРОЙКА ======
+const BOT_USERNAME = "GiftGuarantBot"; // юзернейм бота без @ (запасной, основной приходит с сервера)
+const API_BASE = "";                    // пусто = API на том же домене, что и страница (/app)
+// =======================
+const tg = (window.Telegram && Telegram.WebApp) || null;
+try { if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor("#1F7BF2"); } } catch (e) {}
+const T = {
+  ru: { home:"Главная", new:"Сделка", wallet:"Кошелёк", refs:"Рефералы",
+    h1:"Безопасные сделки через гаранта", sub:"Деньги и товар проходят через гаранта, пока обе стороны не получат своё.",
+    steps:["Создана","Покупатель","Оплата","Выплата"], deals:"Ваши сделки", none:"Сделок пока нет. Создайте первую.",
+    status:["Ждёт покупателя","Покупатель подключился"], create:"Создать сделку", what:"Что продаёте", whatPh:"Например, Telegram-подарок или NFT",
+    amount:"Сумма", curNote:"Валюта сделки по вашему кошельку:", needWallet:"Сначала добавьте кошелёк, он определяет валюту сделки.", toWallet:"Добавить кошелёк",
+    created:"Сделка создана", copied:"Ссылка скопирована", copy:"Скопировать ссылку", dealLink:"Ссылка для покупателя",
+    wType:"Способ получения", wNow:"Сейчас:", wVal:"Реквизиты", bank:"Название банка", save:"Сохранить кошелёк", saved:"Кошелёк сохранён",
+    stars:"Выплата в Telegram Stars, реквизиты не нужны.", ph:{SBP:"+7XXXXXXXXXX",CARD:"16 цифр карты",UA_CARD:"16 цифр карты",TON:"Адрес TON-кошелька"},
+    refT:"Приглашайте и зарабатывайте", refS:"Делитесь ссылкой. Когда приглашённый проведёт сделку, вы получите бонус.", invited:"Приглашено", earned:"Заработано", share:"Поделиться ссылкой",
+    openTg:"Откройте приложение из Telegram: в браузере данные недоступны.", loading:"Загрузка…",
+    err:{bad_phone:"Введите номер в формате +7XXXXXXXXXX",bad_bank:"Название банка: от 2 до 40 символов",bad_card:"Введите 16 цифр карты",bad_ton:"Неверный адрес TON-кошелька",
+      bad_amount:"Неверная сумма для этой валюты",bad_text:"Опишите товар (до 1000 символов)",no_wallet:"Сначала добавьте кошелёк",unauthorized:"Сессия устарела, откройте приложение заново",net:"Нет связи с ботом, попробуйте позже"} },
+  en: { home:"Home", new:"Deal", wallet:"Wallet", refs:"Referrals",
+    h1:"Safe deals through a guarantor", sub:"Money and goods go through the guarantor until both sides get what they paid for.",
+    steps:["Created","Buyer","Payment","Payout"], deals:"Your deals", none:"No deals yet. Create your first one.",
+    status:["Waiting for buyer","Buyer joined"], create:"Create deal", what:"What are you selling", whatPh:"For example, a Telegram gift or NFT",
+    amount:"Amount", curNote:"Deal currency from your wallet:", needWallet:"Add a wallet first, it sets the deal currency.", toWallet:"Add wallet",
+    created:"Deal created", copied:"Link copied", copy:"Copy link", dealLink:"Link for the buyer",
+    wType:"Payout method", wNow:"Current:", wVal:"Details", bank:"Bank name", save:"Save wallet", saved:"Wallet saved",
+    stars:"Payout in Telegram Stars, no details needed.", ph:{SBP:"+7XXXXXXXXXX",CARD:"16-digit card number",UA_CARD:"16-digit card number",TON:"TON wallet address"},
+    refT:"Invite and earn", refS:"Share your link. When an invited user completes a deal, you get a bonus.", invited:"Invited", earned:"Earned", share:"Share link",
+    openTg:"Open the app from Telegram: data is unavailable in a browser.", loading:"Loading…",
+    err:{bad_phone:"Enter the number as +7XXXXXXXXXX",bad_bank:"Bank name: 2 to 40 characters",bad_card:"Enter 16 card digits",bad_ton:"Invalid TON wallet address",
+      bad_amount:"Invalid amount for this currency",bad_text:"Describe the item (up to 1000 characters)",no_wallet:"Add a wallet first",unauthorized:"Session expired, reopen the app",net:"Cannot reach the bot, try again later"} }
+};
+const WT = [["SBP",{ru:"СБП",en:"SBP"}],["CARD",{ru:"Карта РФ",en:"RU card"}],["UA_CARD",{ru:"Карта UA",en:"UA card"}],["TON",{ru:"TON",en:"TON"}],["STARS",{ru:"Stars",en:"Stars"}]];
+const initData = (tg && tg.initData) || "";
+let S = { lang:"ru", tab:"home", sel:0, deals:[], wallet:null, ref:null, bot:BOT_USERNAME, wt:"SBP", last:null, ready:false, form:{text:"",amount:"",wv:"",wb:""} };
+const L = () => T[S.lang], $ = id => document.getElementById(id), esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ico = { home:'<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>', new:'<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>', wallet:'<rect x="3" y="6" width="18" height="14" rx="3"/><path d="M16 13h2M3 10h18M6 6l9-3v3"/>', refs:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M17 5a3.5 3.5 0 0 1 0 7M18 14c2.2.6 3.5 2.6 3.5 5"/>' };
+function toast(m, bad){ const t=$("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toast.h); toast.h=setTimeout(()=>t.classList.remove("show"),2200); try{tg&&tg.HapticFeedback.notificationOccurred(bad?"error":"success")}catch(e){} }
+async function api(path, body){
+  try {
+    const r = await fetch(API_BASE + "/api/" + path, { method:"POST", headers:{ "Content-Type":"application/json", "X-Init-Data":initData }, body:JSON.stringify(body || {}) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || "net");
+    return j;
+  } catch (e) { throw new Error(e.message in L().err ? e.message : "net"); }
+}
+function apply(j){ ["lang","bot","wallet","deals","ref"].forEach(k => { if (j[k] !== undefined) S[k] = j[k]; }); if (j.created) S.last = j.created; }
+function copy(txt){ (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).catch(()=>{ const a=document.createElement("textarea"); a.value=txt; document.body.appendChild(a); a.select(); try{document.execCommand("copy")}catch(e){} a.remove(); }); toast(L().copied); }
+function track(step){ return L().steps.map((s,i)=>`<div class="step ${i<step?"done":i===step?"now":""}">${s}</div>`).join(""); }
+function views(){
+  const l=L(), d=S.deals[S.sel]||S.deals[0];
+  if (!initData) return `<div class="card empty">${l.openTg}</div>`;
+  if (!S.ready) return `<div class="card empty">${l.loading}</div>`;
+  if (S.tab==="home") return `
+    <section class="hero"><h1>${l.h1}</h1><p>${l.sub}</p>
+      ${d?`<div class="tag">${esc(d.title)}</div>`:""}<div class="track">${track(d?d.step:0)}</div></section>
+    <h2>${l.deals}</h2>
+    ${S.deals.length?S.deals.map((x,i)=>`<button class="card deal ${i===S.sel?"sel":""}" data-sel="${i}"><div><b>${esc(x.title)}</b><small>#${esc(x.id)}${x.buyer?" · @"+esc(x.buyer):""}</small><div style="margin-top:6px"><span class="chip ${x.step===1?"ok":""}">${l.status[x.step]}</span></div></div><div class="sum">${esc(x.amount)}</div></button>`).join(""):`<div class="card empty">${l.none}</div>`}
+    <button class="btn" data-go="new">${l.create}</button>`;
+  if (S.tab==="new") return `<h2 style="margin-top:6px">${l.create}</h2>` + (!S.wallet ? `<div class="card"><p>${l.needWallet}</p><button class="btn" data-go="wallet">${l.toWallet}</button></div>` : `<div class="card">
+    <label for="f-t" style="margin-top:0">${l.what}</label><textarea id="f-t" maxlength="1000" placeholder="${l.whatPh}">${esc(S.form.text)}</textarea>
+    <label for="f-a">${l.amount}</label><input id="f-a" inputmode="decimal" placeholder="1000" value="${esc(S.form.amount)}">
+    <p style="color:var(--mute);margin-top:10px;font-size:13px">${l.curNote} <b>${esc(S.wallet.currency)}</b></p><div class="err" id="e-n"></div>
+    <button class="btn" id="mk">${l.create}</button></div>`) +
+    (S.last?`<h2>${l.dealLink}</h2><div class="card"><div class="linkbox">${esc(S.last.link)}</div><button class="btn ghost" data-copy="${esc(S.last.link)}">${l.copy}</button></div>`:"");
+  if (S.tab==="wallet") return `<h2 style="margin-top:6px">${l.wallet}</h2><div class="card">
+    ${S.wallet?`<p style="margin-bottom:12px;color:var(--mute)">${l.wNow} <b style="color:var(--ink)">${esc(S.wallet.masked)}${S.wallet.bank&&!["STARS","TON","UA_CARD"].includes(S.wallet.bank)?" · "+esc(S.wallet.bank):""}</b></p>`:""}
+    <label style="margin-top:0">${l.wType}</label><div class="seg">${WT.map(([k,n])=>`<button data-wt="${k}" class="${k===S.wt?"on":""}">${n[S.lang]}</button>`).join("")}</div>
+    ${S.wt==="STARS"?`<p style="color:var(--mute);margin-top:14px">${l.stars}</p>`:`<label for="f-w">${l.wVal}</label><input id="f-w" value="${esc(S.form.wv)}" placeholder="${l.ph[S.wt]}" autocomplete="off">`}
+    ${["SBP","CARD"].includes(S.wt)?`<label for="f-b">${l.bank}</label><input id="f-b" value="${esc(S.form.wb)}" autocomplete="off">`:""}
+    <div class="err" id="e-w"></div><button class="btn" id="sw">${l.save}</button></div>`;
+  const r=S.ref||{link:"",count:0,earned:0};
+  return `<h2 style="margin-top:6px">${l.refT}</h2><div class="card"><p style="color:var(--mute);margin-bottom:12px">${l.refS}</p>
+    <div class="linkbox">${esc(r.link)}</div>
+    <div class="stats"><div><b>${esc(r.count)}</b><small>${l.invited}</small></div><div><b>${esc(r.earned)}</b><small>${l.earned}</small></div></div>
+    <button class="btn" data-copy="${esc(r.link)}">${l.copy}</button><button class="btn ghost" id="sh">${l.share}</button></div>`;
+}
+function render(){
+  const l=L();
+  $("app").innerHTML = `<div class="top"><div class="brand"><span class="logo"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5z"/></svg></span>GiftGuarant</div>
+    <div class="lang"><button data-lang="ru" class="${S.lang==="ru"?"on":""}">RU</button><button data-lang="en" class="${S.lang==="en"?"on":""}">EN</button></div></div>` + views();
+  $("tabs").innerHTML = ["home","new","wallet","refs"].map(k=>`<button data-go="${k}" class="${S.tab===k?"on":""}"><svg viewBox="0 0 24 24">${ico[k]}</svg>${l[k]}</button>`).join("");
+  document.documentElement.lang=S.lang;
+}
+document.addEventListener("input", e=>{ const m={ "f-t":"text","f-a":"amount","f-w":"wv","f-b":"wb" }[e.target.id]; if (m) S.form[m]=e.target.value; });
+const showErr = (id, e) => { const n=$(id); if (n) n.textContent = L().err[e.message] || L().err.net; toast(L().err[e.message] || L().err.net, true); };
+document.addEventListener("click", async e=>{
+  const b=e.target.closest("button"); if(!b) return; const d=b.dataset, l=L();
+  try {
+    if (d.go){ S.tab=d.go; render(); window.scrollTo(0,0); }
+    else if (d.lang){ S.lang=d.lang; render(); api("lang",{lang:d.lang}).catch(()=>{}); }
+    else if (d.sel!==undefined){ S.sel=+d.sel; render(); window.scrollTo(0,0); }
+    else if (d.wt){ S.wt=d.wt; render(); }
+    else if (d.copy){ copy(d.copy); }
+    else if (b.id==="mk"){
+      b.disabled=true;
+      try { apply(await api("deal",{text:S.form.text,amount:S.form.amount})); S.form.text=""; S.form.amount=""; S.sel=0; render(); toast(l.created); }
+      catch (er) { b.disabled=false; showErr("e-n", er); }
+    }
+    else if (b.id==="sw"){
+      b.disabled=true;
+      try { apply(await api("wallet",{type:S.wt,value:S.form.wv,bank:S.form.wb})); S.form.wv=""; S.form.wb=""; render(); toast(l.saved); }
+      catch (er) { b.disabled=false; showErr("e-w", er); }
+    }
+    else if (b.id==="sh"){ const u="https://t.me/share/url?url="+encodeURIComponent(S.ref.link); try{ tg?tg.openTelegramLink(u):window.open(u) }catch(er){ window.open(u) } }
+  } catch (er) {}
+});
+render();
+if (initData) api("state").then(j => { apply(j); S.ready=true; render(); }).catch(er => { S.ready=true; render(); toast(L().err[er.message]||L().err.net, true); });
+</script>
+</body>
+</html>
